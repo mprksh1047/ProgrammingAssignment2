@@ -1,15 +1,67 @@
-## Put comments here that give an overall description of what your
-## functions do
+## The following two functions uses Lexical Scoping property of R to cache the inverse of the matrix as the matrix
+## is tedious. This saves a lot of memory. 
 
-## Write a short comment describing this function
+## The given function has 4 inbuilt functions. They are similar to the one in the example given for this assignment. 
+## get prints the input of the function 
+##set replaces the matrix with other. 
+## setinv replaces the inverse of the matrix(m) with the input of the function
+## getinv prints the inverse of the matrix. 
 
 makeCacheMatrix <- function(x = matrix()) {
+    m <- NULL
+    set <- function(y) {
+        x <<- y
+        m <<- NULL
+    }
+    get <- function() x
+    setinv <- function(inverse) m <<- inverse
+    getinv <- function() m
+    list(set = set, get = get,
+         setinv = setinv,
+         getinv = getinv)
 
 }
 
 
-## Write a short comment describing this function
+## The following function gives the inverse of the function. 
+## The first time, it will calculate inverse of the fucntion but then it will fix the value to "m". 
+## When we run the function the next time, it will see if "m" already exists. If it exits, then it will print the value of m
+## instead of calculating inverse of the matrix. 
 
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+        m <- x$getinv()
+        if(!is.null(m)) {
+            message("getting cached data.")
+            return(m)
+        }
+        data <- x$get()
+        m <- solve(data)
+        x$setinv(m)
+        m
 }
+
+
+
+## sample run
+## x <- rbind(-1:-3, 4:6)
+## > a <- makeCacheMatrix(x)
+## > a$get()
+## [,1] [,2] [,3]
+## [1,]   -1   -2   -3
+## [2,]    4    5    6
+## > x <- rbind(-1:-2, 4:5)
+## > a <- makeCacheMatrix(x)
+## > a$get()
+## [,1] [,2]
+## [1,]   -1   -2
+## [2,]    4    5
+## > cacheSolve(a)
+## [,1]       [,2]
+## [1,]  1.666667  0.6666667
+## [2,] -1.333333 -0.3333333
+## > cacheSolve(a)
+## getting cached data.
+## [,1]       [,2]
+## [1,]  1.666667  0.6666667
+## [2,] -1.333333 -0.3333333
+## > 
